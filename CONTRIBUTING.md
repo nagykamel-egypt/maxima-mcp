@@ -5,7 +5,7 @@ Thanks for improving `maxima-mcp`.
 ## Development setup
 
 ```bash
-git clone https://github.com/maxima-project/maxima-mcp.git
+git clone https://github.com/nagykamel-egypt/maxima-mcp.git
 cd maxima-mcp
 npm ci
 ```

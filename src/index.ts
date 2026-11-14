@@ -48,7 +48,7 @@ MCP client configuration (stdio):
     }
   }
 
-Documentation: https://github.com/maxima-project/maxima-mcp
+Documentation: https://github.com/nagykamel-egypt/maxima-mcp
 `);
 }
 

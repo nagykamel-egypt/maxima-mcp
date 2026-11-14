@@ -16,11 +16,11 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maxima-project/maxima-mcp.git"
+    "url": "git+https://github.com/nagykamel-egypt/maxima-mcp.git"
   },
-  "homepage": "https://github.com/maxima-project/maxima-mcp#readme",
+  "homepage": "https://github.com/nagykamel-egypt/maxima-mcp#readme",
   "bugs": {
-    "url": "https://github.com/maxima-project/maxima-mcp/issues"
+    "url": "https://github.com/nagykamel-egypt/maxima-mcp/issues"
   },
   "author": "Maxima MCP contributors",
   "bin": {

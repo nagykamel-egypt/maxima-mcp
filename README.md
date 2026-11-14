@@ -1,5 +1,9 @@
 # Maxima MCP Server
 
+[![CI](https://github.com/nagykamel-egypt/maxima-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/nagykamel-egypt/maxima-mcp/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/nagykamel-egypt/maxima-mcp?display_name=tag&sort=semver)](https://github.com/nagykamel-egypt/maxima-mcp/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A production-grade [Model Context Protocol](https://modelcontextprotocol.io) server for
 [Maxima](https://maxima.sourceforge.io), the computer algebra system. It gives LLM clients a
 stateful symbolic-math workbench: evaluation, calculus, linear algebra, plotting, full-text manual
@@ -86,7 +90,7 @@ clear, actionable error when unavailable.
 ### From source
 
 ```bash
-git clone https://github.com/maxima-project/maxima-mcp.git
+git clone https://github.com/nagykamel-egypt/maxima-mcp.git
 cd maxima-mcp
 npm ci
 npm run build
@@ -101,6 +105,19 @@ Logs go to stderr and never pollute the protocol channel.
 ```bash
 npx -y maxima-mcp
 ```
+
+### GitHub release package
+
+Download `maxima-mcp-<version>.tgz` from the
+[latest release](https://github.com/nagykamel-egypt/maxima-mcp/releases/latest) and install it
+globally:
+
+```bash
+npm install -g ./maxima-mcp-1.0.0.tgz
+maxima-mcp --version
+```
+
+The release tarball is an npm package that contains the compiled `dist/` output.
 
 ### Docker (HTTP)
 

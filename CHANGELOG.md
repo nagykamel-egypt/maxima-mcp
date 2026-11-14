@@ -6,19 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-11-14
+
 ### Added
 
+- Initial public release of the Maxima MCP server.
 - Engineering case study: VAV supply-air duct system and fan selection for a mid-rise office floor,
   including ASHRAE 62.1 ventilation, Colebrook duct friction, ASHRAE 90.1 fan-power compliance,
   altitude correction, duct heat gain, fan/system operating points and part-load energy, with a
   runnable Maxima script and charts.
 - Comparison report revision 1.1: added Case C and renumbered sections and appendices.
-
-## [1.0.0] - 2026-11-13
-
-### Added
-
-- Initial enterprise release of the Maxima MCP server.
 - Persistent, crash-resilient Maxima sessions with sentinel-framed output attribution, timeouts,
   cancellation, crash recovery, idle expiry and LRU eviction.
 - 29 MCP tools:
@@ -50,4 +47,4 @@ All notable changes to this project are documented here. The format follows
   section selection, design checks and Maxima-generated diagrams.
 - 113 automated tests (unit and integration).
 
-[1.0.0]: https://github.com/maxima-project/maxima-mcp/releases/tag/v1.0.0
+[1.0.0]: https://github.com/nagykamel-egypt/maxima-mcp/releases/tag/v1.0.0
