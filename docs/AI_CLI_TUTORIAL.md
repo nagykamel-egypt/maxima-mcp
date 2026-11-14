@@ -11,9 +11,8 @@ The examples assume the server lives at:
 /ABS/PATH/maxima-mcp
 ```
 
-Replace `/ABS/PATH/maxima-mcp` with your checkout path. If you install the published package, you
-can replace `node /ABS/PATH/maxima-mcp/dist/index.js` with `npx -y maxima-mcp` or a globally linked
-`maxima-mcp` command.
+Replace `/ABS/PATH/maxima-mcp` with your checkout path. If you install the GitHub release package,
+you can replace `node /ABS/PATH/maxima-mcp/dist/index.js` with the global `maxima-mcp` command.
 
 ## Contents
 

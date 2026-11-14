@@ -107,21 +107,20 @@ node dist/index.js
 The default transport is stdio, so running it directly waits for an MCP client on stdin/stdout.
 Logs go to stderr and never pollute the protocol channel.
 
-### Published package
-
-```bash
-npx -y maxima-mcp
-```
-
 ### GitHub release package
 
-Download `maxima-mcp-<version>.tgz` from the
-[latest release](https://github.com/nagykamel-egypt/maxima-mcp/releases/latest) and install it
-globally:
+Install the tarball directly from the
+[latest release](https://github.com/nagykamel-egypt/maxima-mcp/releases/latest):
+
+```bash
+npm install -g https://github.com/nagykamel-egypt/maxima-mcp/releases/download/v1.0.0/maxima-mcp-1.0.0.tgz
+maxima-mcp --version
+```
+
+Or download `maxima-mcp-<version>.tgz` and install the local file:
 
 ```bash
 npm install -g ./maxima-mcp-1.0.0.tgz
-maxima-mcp --version
 ```
 
 The release tarball is an npm package that contains the compiled `dist/` output.
@@ -142,6 +141,9 @@ docker run --rm -p 127.0.0.1:7331:7331 \
 > **Using an AI CLI?** See the **[AI CLI tutorial](docs/AI_CLI_TUTORIAL.md)** for step-by-step setup
 > with OpenCode, Claude Code, OpenAI Codex CLI, Gemini CLI, Cursor CLI, GitHub Copilot CLI, Crush
 > and generic JSON clients.
+>
+> The examples below assume the release package is installed and `maxima-mcp` is on `PATH`. For a
+> local checkout, use the absolute `node dist/index.js` path instead.
 
 ### Claude Desktop / Claude Code
 
@@ -151,8 +153,7 @@ docker run --rm -p 127.0.0.1:7331:7331 \
 {
   "mcpServers": {
     "maxima": {
-      "command": "npx",
-      "args": ["-y", "maxima-mcp"]
+      "command": "maxima-mcp"
     }
   }
 }
@@ -183,8 +184,7 @@ From a local checkout, use an absolute path:
   "servers": {
     "maxima": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "maxima-mcp"]
+      "command": "maxima-mcp"
     }
   }
 }
@@ -198,8 +198,7 @@ From a local checkout, use an absolute path:
 {
   "mcpServers": {
     "maxima": {
-      "command": "npx",
-      "args": ["-y", "maxima-mcp"]
+      "command": "maxima-mcp"
     }
   }
 }

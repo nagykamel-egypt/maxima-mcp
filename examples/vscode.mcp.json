@@ -2,8 +2,7 @@
   "servers": {
     "maxima": {
       "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "maxima-mcp"],
+      "command": "maxima-mcp",
       "env": {
         "MAXIMA_MCP_LOG_LEVEL": "info"
       }

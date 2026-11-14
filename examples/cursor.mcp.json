@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "maxima": {
-      "command": "npx",
-      "args": ["-y", "maxima-mcp"]
+      "command": "maxima-mcp"
     }
   }
 }
