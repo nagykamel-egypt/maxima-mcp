@@ -9,6 +9,11 @@ A production-grade [Model Context Protocol](https://modelcontextprotocol.io) ser
 stateful symbolic-math workbench: evaluation, calculus, linear algebra, plotting, full-text manual
 search, and source-code inspection.
 
+[![Maxima MCP Server architecture](docs/img/architecture.png)](docs/img/architecture.svg)
+
+<details>
+<summary>Text version of the architecture</summary>
+
 ```
 ┌──────────────┐   stdio / Streamable HTTP   ┌──────────────────┐   framed REPL   ┌─────────┐
 │ MCP client   │ ◄─────────────────────────► │  maxima-mcp      │ ◄─────────────► │ Maxima  │
@@ -20,6 +25,8 @@ search, and source-code inspection.
                                         │ BM25 + symbol indexes   │
                                         └─────────────────────────┘
 ```
+
+</details>
 
 ## Highlights
 
