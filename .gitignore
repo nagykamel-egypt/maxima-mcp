@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build output
+dist/
+*.tsbuildinfo
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Test / coverage
+coverage/
+.nyc_output/
+test-results/
+*.lcov
+
+# Editor / OS
+.vscode/
+.idea/
+.obsidian/
+.DS_Store
+Thumbs.db
+
+# Runtime artifacts
+.cache/
+tmp/
+*.svg.tmp
+
+# Generated plots
+plots/
+
+# Course materials (kept local, not published)
+course/

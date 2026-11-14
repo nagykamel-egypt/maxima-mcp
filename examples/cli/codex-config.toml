@@ -1,0 +1,20 @@
+# OpenAI Codex CLI configuration: ~/.codex/config.toml
+# Project-scoped alternative: .codex/config.toml (trusted projects only)
+
+[mcp_servers.maxima]
+command = "node"
+args = ["/ABS/PATH/maxima-mcp/dist/index.js"]
+startup_timeout_sec = 30
+tool_timeout_sec = 300
+
+[mcp_servers.maxima.env]
+MAXIMA_MCP_DEFAULT_TIMEOUT_MS = "60000"
+MAXIMA_MCP_MAX_TIMEOUT_MS = "300000"
+
+# Remote HTTP alternative:
+#
+# [mcp_servers.maxima]
+# url = "http://127.0.0.1:7331/mcp"
+# bearer_token_env_var = "MAXIMA_MCP_AUTH_TOKEN"
+# startup_timeout_sec = 30
+# tool_timeout_sec = 300

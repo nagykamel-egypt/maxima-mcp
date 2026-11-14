@@ -1,0 +1,43 @@
+services:
+  maxima-mcp:
+    build: .
+    image: maxima-mcp:1.0.0
+    container_name: maxima-mcp
+    init: true
+    ports:
+      - "127.0.0.1:7331:7331"
+    environment:
+      MAXIMA_MCP_TRANSPORT: http
+      MAXIMA_MCP_HOST: 0.0.0.0
+      MAXIMA_MCP_PORT: "7331"
+      MAXIMA_MCP_AUTH_TOKEN: ${MAXIMA_MCP_AUTH_TOKEN:?set MAXIMA_MCP_AUTH_TOKEN in your environment}
+      MAXIMA_MCP_ALLOWED_HOSTS: ${MAXIMA_MCP_ALLOWED_HOSTS:-localhost,127.0.0.1}
+      MAXIMA_MCP_CORS_ORIGINS: ${MAXIMA_MCP_CORS_ORIGINS:-*}
+      MAXIMA_MCP_LOG_FORMAT: json
+      MAXIMA_MCP_LOG_LEVEL: ${MAXIMA_MCP_LOG_LEVEL:-info}
+      MAXIMA_MCP_MAX_SESSIONS: ${MAXIMA_MCP_MAX_SESSIONS:-8}
+    volumes:
+      - maxima-cache:/home/mcp/.cache/maxima-mcp
+    read_only: true
+    tmpfs:
+      - /tmp:exec,size=512m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:7331/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  maxima-cache:

@@ -1,0 +1,180 @@
+/* ------------------------------------------------------------------
+   Thermal expansion loop for a DN100 heating-water riser
+   Preliminary ASME B31.1 displacement-stress check and 2D frame check
+   ------------------------------------------------------------------
+   Run with:  maxima -b design.mac
+   Units:     N, mm, MPa, K
+   ------------------------------------------------------------------ */
+
+kill(all)$
+assume(E>0, D>0, t>0, L>0, L_r>0, alpha>0, DeltaT>0, S_A>0, i>0)$
+
+/* ---------- 1. Symbolic model ------------------------------------ */
+
+Delta      : alpha*L_r*DeltaT$
+delta_leg  : Delta/2$
+S_b        : 3*E*D*delta_leg/L^2$
+S_E        : i*S_b$
+L_req      : sqrt(3*E*D*delta_leg*i/S_A)$
+I          : %pi/64*(D^4 - (D-2*t)^4)$
+Z          : 2*I/D$
+A_pipe     : %pi/4*(D^2 - (D-2*t)^2)$
+F_anchor   : 12*E*I*Delta/L^3$
+M_fixed    : 6*E*I*delta_leg/L^2$
+
+/* ---------- 2. Design data and code allowables ------------------- */
+
+N_cycles : 15000$
+f_cycle  : 6/N_cycles^0.2$
+Sc       : 137.9$        /* MPa, cold allowable */
+Sh       : 137.9$        /* MPa, hot allowable  */
+SA_num   : float(f_cycle*(1.25*Sc + 0.25*Sh))$
+
+D_val : 114.3$
+t_val : 6.02$
+R_val : 3*D_val$
+r_val : D_val/2$
+h_val : t_val*R_val/r_val^2$
+i_val : float(0.9/h_val^(2/3))$
+
+params0 : [E=200000, D=D_val, t=t_val, L_r=30000,
+           alpha=12e-6, DeltaT=80, S_A=SA_num, i=i_val]$
+
+Delta_num  : float(ev(Delta, params0))$
+I_num      : float(ev(I, params0))$
+Z_num      : float(ev(Z, params0))$
+A_num      : float(ev(A_pipe, params0))$
+L_req_num  : float(ev(L_req, params0))$
+
+L_sel : 2700$
+params : append(params0, [L=L_sel])$
+
+S_b_num  : float(ev(S_b, params))$
+S_E_num  : float(ev(S_E, params))$
+M_num    : float(ev(M_fixed, params))$
+F_num    : float(ev(F_anchor, params))$
+util_num : float(ev(S_E/S_A, params))$
+
+/* ---------- 3. Support and weight check -------------------------- */
+
+rho_s : 7850$  rho_w : 1000$  g : 9.81$
+A_i   : %pi/4*(D_val - 2*t_val)^2$
+m_s   : float(A_num*1e-6*rho_s)$
+m_w   : float(A_i*1e-6*rho_w)$
+m_ins : float(%pi/4*(0.2143^2 - 0.1143^2)*100)$
+m_tot : float(m_s + m_w + m_ins + 1.0)$
+w_tot : float(m_tot*g)$             /* N/m */
+w_mm  : float(w_tot/1000)$          /* N/mm */
+
+L_span : 4000$
+M_span : float(w_mm*L_span^2/8)$
+S_span : float(M_span/Z_num)$
+d_span : float(5*w_mm*L_span^4/(384*200000*I_num))$
+R_span : float(w_tot*(L_span/1000))$
+W_riser: float(w_tot*30)$
+F_design: float(F_num + W_riser)$
+
+/* ---------- 4. 2D frame verification ----------------------------- */
+
+E_f : 200000$ I_f : I_num$ A_f : A_num$
+L_f : L_sel$ H_f : 1300$ Delta_f : Delta_num$
+
+k(EA,EI,l,phi):=block([c:cos(phi),s:sin(phi),kl,T],
+  kl:matrix([EA/l,0,0,-EA/l,0,0],
+            [0,12*EI/l^3,6*EI/l^2,0,-12*EI/l^3,6*EI/l^2],
+            [0,6*EI/l^2,4*EI/l,0,-6*EI/l^2,2*EI/l],
+            [-EA/l,0,0,EA/l,0,0],
+            [0,-12*EI/l^3,-6*EI/l^2,0,12*EI/l^3,-6*EI/l^2],
+            [0,6*EI/l^2,2*EI/l,0,-6*EI/l^2,4*EI/l]),
+  T:matrix([c,s,0,0,0,0],
+           [-s,c,0,0,0,0],
+           [0,0,1,0,0,0],
+           [0,0,0,c,s,0],
+           [0,0,0,-s,c,0],
+           [0,0,0,0,0,1]),
+  ratsimp(transpose(T).kl.T))$
+
+add_block(M,B,r,c):=block([N:M],
+  for i:1 thru 6 do for j:1 thru 6 do
+    N[r+i-1,c+j-1]:N[r+i-1,c+j-1]+B[i,j], N)$
+
+K : zeromatrix(12,12)$
+K : add_block(K, k(E_f*A_f, E_f*I_f, L_f, 0), 1, 1)$
+K : add_block(K, k(E_f*A_f, E_f*I_f, H_f, %pi/2), 4, 4)$
+K : add_block(K, k(E_f*A_f, E_f*I_f, L_f, %pi), 7, 7)$
+
+f_dof : [4,5,6,7,8,9]$
+c_dof : [1,2,3,10,11,12]$
+
+Kff : genmatrix(lambda([i,j], K[f_dof[i],f_dof[j]]), 6, 6)$
+Kfc : genmatrix(lambda([i,j], K[f_dof[i],c_dof[j]]), 6, 6)$
+Kcf : genmatrix(lambda([i,j], K[c_dof[i],f_dof[j]]), 6, 6)$
+Kcc : genmatrix(lambda([i,j], K[c_dof[i],c_dof[j]]), 6, 6)$
+
+Uc : matrix([0],[0],[0],[0],[Delta_f],[0])$
+Uf : float(invert(Kff).(-Kfc.Uc))$
+Rc : float(Kcf.Uf + Kcc.Uc)$
+
+/* recover member end forces */
+U : zeromatrix(12,1)$
+for i:1 thru 6 do U[f_dof[i],1] : Uf[i,1]$
+for i:1 thru 6 do U[c_dof[i],1] : Uc[i,1]$
+
+Tmat(phi):=block([c:cos(phi),s:sin(phi)],
+  matrix([c,s,0,0,0,0],[-s,c,0,0,0,0],[0,0,1,0,0,0],
+         [0,0,0,c,s,0],[0,0,0,-s,c,0],[0,0,0,0,0,1]))$
+
+klocal(EA,EI,l):=matrix(
+  [EA/l,0,0,-EA/l,0,0],
+  [0,12*EI/l^3,6*EI/l^2,0,-12*EI/l^3,6*EI/l^2],
+  [0,6*EI/l^2,4*EI/l,0,-6*EI/l^2,2*EI/l],
+  [-EA/l,0,0,EA/l,0,0],
+  [0,-12*EI/l^3,-6*EI/l^2,0,12*EI/l^3,-6*EI/l^2],
+  [0,6*EI/l^2,2*EI/l,0,-6*EI/l^2,4*EI/l])$
+
+ug_AB : matrix([U[1,1]],[U[2,1]],[U[3,1]],[U[4,1]],[U[5,1]],[U[6,1]])$
+fl_AB : float(klocal(E_f*A_f,E_f*I_f,L_f).Tmat(0).ug_AB)$
+ug_CD : matrix([U[7,1]],[U[8,1]],[U[9,1]],[U[10,1]],[U[11,1]],[U[12,1]])$
+fl_CD : float(klocal(E_f*A_f,E_f*I_f,L_f).Tmat(%pi).ug_CD)$
+
+M_frame : max(abs(fl_AB[3,1]),abs(fl_AB[6,1]),abs(fl_CD[3,1]),abs(fl_CD[6,1]))$
+S_frame : float(M_frame/Z_num)$
+S_frame_i : float(S_frame*i_val)$
+util_frame : float(S_frame_i/SA_num)$
+R_frame : float(abs(Rc[2,1]))$
+
+/* ---------- 5. Report -------------------------------------------- */
+
+print("")$
+print("DN100 heating-water riser: preliminary expansion-loop design")$
+print("-------------------------------------------------------------")$
+print("Allowable stress range S_A [MPa] :", SA_num)$
+print("SIF i (-)                        :", i_val)$
+print("Thermal growth Delta [mm]        :", Delta_num)$
+print("Second moment I [mm^4]            :", I_num)$
+print("Section modulus Z [mm^3]          :", Z_num)$
+print("Required leg L_req [mm]           :", L_req_num)$
+print("Selected leg L [mm]               :", L_sel)$
+print("Nominal bending stress [MPa]      :", S_b_num)$
+print("Expansion stress S_E [MPa]        :", S_E_num)$
+print("Utilization S_E/S_A               :", util_num)$
+print("Fixed-end moment [N mm]           :", M_num)$
+print("Conservative reaction [N]         :", F_num)$
+print("")$
+print("Support check (4.0 m span)")$
+print("Total mass [kg/m]                 :", m_tot)$
+print("Total weight [N/m]                :", w_tot)$
+print("Span moment [N mm]                :", M_span)$
+print("Span stress [MPa]                 :", S_span)$
+print("Span sag [mm]                     :", d_span)$
+print("Support load [N]                  :", R_span)$
+print("Riser weight [N]                  :", W_riser)$
+print("Anchor design vertical [N]        :", F_design)$
+print("")$
+print("2D frame verification")$
+print("Max frame moment [N mm]           :", M_frame)$
+print("Frame stress [MPa]                :", S_frame)$
+print("Frame stress with SIF [MPa]       :", S_frame_i)$
+print("Frame utilization                 :", util_frame)$
+print("Frame vertical reaction [N]       :", R_frame)$
+print("-------------------------------------------------------------")$

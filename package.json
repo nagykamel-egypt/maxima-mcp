@@ -1,0 +1,88 @@
+{
+  "name": "maxima-mcp",
+  "version": "1.0.0",
+  "description": "Enterprise-grade Model Context Protocol server for Maxima, the computer algebra system.",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "maxima",
+    "cas",
+    "computer-algebra",
+    "symbolic-math",
+    "llm",
+    "ai"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxima-project/maxima-mcp.git"
+  },
+  "homepage": "https://github.com/maxima-project/maxima-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/maxima-project/maxima-mcp/issues"
+  },
+  "author": "Maxima MCP contributors",
+  "bin": {
+    "maxima-mcp": "dist/index.js"
+  },
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js"
+    }
+  },
+  "files": [
+    "dist",
+    "docs",
+    "examples",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "SECURITY.md"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run test/unit",
+    "test:integration": "vitest run test/integration",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "cheerio": "^1.2.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.4",
+    "express": "^5.3.0",
+    "pino": "^10.4.0",
+    "pino-pretty": "^13.1.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.2",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.4",
+    "@vitest/coverage-v8": "^3.2.7",
+    "eslint": "9.39.2",
+    "globals": "^17.14.0",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.72.2",
+    "vitest": "^3.2.4"
+  }
+}

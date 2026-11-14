@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "maxima": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["/ABS/PATH/maxima-mcp/dist/index.js"],
+      "env": {
+        "MAXIMA_MCP_DEFAULT_TIMEOUT_MS": "60000",
+        "MAXIMA_MCP_MAX_TIMEOUT_MS": "300000"
+      }
+    }
+  }
+}

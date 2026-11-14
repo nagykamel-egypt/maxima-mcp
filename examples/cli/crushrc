@@ -1,0 +1,11 @@
+# Crush configuration: ~/.config/crush/crushrc (or ./.crushrc)
+# This file is trusted shell code. Do not source untrusted files.
+
+mcp add maxima --command node --args /ABS/PATH/maxima-mcp/dist/index.js \
+  --env MAXIMA_MCP_DEFAULT_TIMEOUT_MS 60000 \
+  --env MAXIMA_MCP_MAX_TIMEOUT_MS 300000
+
+# Remote HTTP alternative:
+#
+# mcp add maxima --type http --url http://127.0.0.1:7331/mcp \
+#   --header Authorization "Bearer $MAXIMA_MCP_AUTH_TOKEN"

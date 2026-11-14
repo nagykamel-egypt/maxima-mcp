@@ -1,0 +1,21 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "servers": {
+      "maxima": {
+        "type": "local",
+        "command": ["node", "/ABS/PATH/maxima-mcp/dist/index.js"],
+        "environment": {
+          "MAXIMA_MCP_DEFAULT_TIMEOUT_MS": "60000",
+          "MAXIMA_MCP_MAX_TIMEOUT_MS": "300000",
+        },
+        // Optional: expose the 29 tools directly instead of through Code Mode.
+        "codemode": false,
+        "timeout": {
+          "startup": 30000,
+          "execution": 600000,
+        },
+      },
+    },
+  },
+}

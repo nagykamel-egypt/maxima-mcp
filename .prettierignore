@@ -1,0 +1,9 @@
+dist
+node_modules
+coverage
+package-lock.json
+.obsidian
+.vscode
+.idea
+plots
+course
