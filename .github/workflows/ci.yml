@@ -62,6 +62,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Validate agent skill
+        run: npm run skill:verify
+
+      - name: Smoke test agent skill
+        run: npm run skill:smoke -- --command "node dist/index.js" --timeout 60000
+
       - name: Smoke test binary
         run: |
           node dist/index.js --version

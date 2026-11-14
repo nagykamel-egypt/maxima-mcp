@@ -41,6 +41,7 @@ COPY --from=build /app/package.json /app/package-lock.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY README.md LICENSE ./
+COPY skills ./skills
 
 RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin mcp \
     && mkdir -p /home/mcp/.cache/maxima-mcp \

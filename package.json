@@ -38,6 +38,7 @@
     "dist",
     "docs",
     "examples",
+    "skills",
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
@@ -59,6 +60,12 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "skill:check": "node skills/maxima-mcp/scripts/validate.mjs",
+    "skill:drift": "node skills/maxima-mcp/scripts/check-drift.mjs",
+    "skill:eval": "node skills/maxima-mcp/scripts/eval.mjs self-test",
+    "skill:verify": "node skills/maxima-mcp/scripts/validate.mjs && node skills/maxima-mcp/scripts/check-drift.mjs && node skills/maxima-mcp/scripts/eval.mjs self-test",
+    "skill:test": "vitest run test/unit/skill.test.ts test/integration/skill-scripts.test.ts",
+    "skill:smoke": "node skills/maxima-mcp/scripts/smoke.mjs",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {

@@ -224,6 +224,28 @@ More examples are in [`examples/`](examples). Ready-to-copy CLI configs are in
 [`examples/cli/`](examples/cli), and the full walkthrough is
 [`docs/AI_CLI_TUTORIAL.md`](docs/AI_CLI_TUTORIAL.md).
 
+## AI agent skill
+
+A portable, enterprise-oriented agent skill is available at
+[`skills/maxima-mcp/`](skills/maxima-mcp). It gives any MCP-capable client the
+tool-selection rules, session discipline, verification protocol, error recovery,
+safety controls, deployment guidance, and copy-ready recipes for this server.
+
+```bash
+# OpenCode (global)
+mkdir -p ~/.config/opencode/skills
+ln -s "$PWD/skills/maxima-mcp" ~/.config/opencode/skills/maxima-mcp
+
+# Claude Code (project)
+mkdir -p .claude/skills
+cp -R skills/maxima-mcp .claude/skills/
+```
+
+The skill is client-neutral and uses the standard `SKILL.md` layout. See
+[`skills/maxima-mcp/README.md`](skills/maxima-mcp/README.md) for installation,
+compatibility, validation and smoke tests. The enterprise review report is
+[`docs/SKILL_REVIEW.md`](docs/SKILL_REVIEW.md).
+
 ## Tool catalog
 
 ### Evaluation and sessions

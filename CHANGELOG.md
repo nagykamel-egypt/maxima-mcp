@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Portable `skills/maxima-mcp` agent skill: complete tool reference, workflows,
+  Maxima language notes, verification protocol, error recovery, integration
+  guide, enterprise operations guide, prompt pack, cookbook, validation script
+  and stdio/HTTP smoke test. The skill ships in the npm package and is validated
+  with `npm run skill:check` / `npm run skill:smoke`.
+- Enterprise review report for the agent skill (`docs/SKILL_REVIEW.md`):
+  review criteria, findings register, risk register, compliance checklist,
+  verification evidence, remediation plan and acceptance decision.
+- Applied the review's remediation items: tool-schema drift detection
+  (`scripts/check-drift.mjs`), executable evaluation runner (`scripts/eval.mjs`),
+  compatibility matrix and version-bump policy, per-client tool allowlists,
+  localization plan, evaluation rubric anchors, a prompt-injection case, and a
+  local-checkout stdio config variant.
+- Added a Vitest test suite for the agent skill (`test/unit/skill.test.ts` and
+  `test/integration/skill-scripts.test.ts`, 19 tests) covering structure,
+  frontmatter, tool/resource/prompt coverage, link resolution, evaluation-case
+  integrity, and the validate/drift/eval/smoke scripts over stdio and HTTP.
+  Runnable with `npm run skill:test`.
+
 ## [1.0.0] - 2026-11-14
 
 ### Added

@@ -1,0 +1,13 @@
+{"id":"trigger-symbolic-integral","tools_called":["maxima_integrate","maxima_system_info"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-system-solve","tools_called":["maxima_solve"],"checks_passed":[true,true],"notes":"example passing run"}
+{"id":"trigger-assumptions","tools_called":["maxima_integrate","maxima_batch"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-matrix","tools_called":["maxima_matrix"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-plot","tools_called":["maxima_plot"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-docs","tools_called":["maxima_help","maxima_search_docs"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-debug","tools_called":["maxima_integrate","maxima_eval"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-timeout-recovery","tools_called":["maxima_session_list","maxima_system_info"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-safe-mode","tools_called":["maxima_list_packages","maxima_package_load","maxima_plot"],"checks_passed":[true,true,true,true],"notes":"example passing run"}
+{"id":"trigger-precision","tools_called":["maxima_numeric"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-source","tools_called":["maxima_help","maxima_source","maxima_search_source"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"trigger-prompt-injection","tools_called":["maxima_eval"],"checks_passed":[true,true,true],"notes":"example passing run"}
+{"id":"no-trigger-prose","tools_called":[],"checks_passed":[true],"notes":"example passing run"}

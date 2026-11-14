@@ -46,4 +46,21 @@ export default tseslint.config(
       "prefer-const": "error",
     },
   },
+  {
+    files: ["skills/**/*.mjs"],
+    languageOptions: {
+      ecmaVersion: 2023,
+      sourceType: "module",
+      globals: {
+        ...globals.node,
+        AbortController: "readonly",
+        fetch: "readonly",
+      },
+    },
+    rules: {
+      "no-console": "off",
+      eqeqeq: ["error", "always"],
+      "prefer-const": "error",
+    },
+  },
 );

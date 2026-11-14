@@ -7,3 +7,5 @@ package-lock.json
 .idea
 plots
 course
+skills/maxima-mcp/LICENSE
+skills/maxima-mcp/evals/example-results.jsonl
