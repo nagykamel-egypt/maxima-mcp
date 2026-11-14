@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------
 # Build stage
 # ---------------------------------------------------------------------------
-FROM node:22-bookworm-slim AS build
+FROM node:25-bookworm-slim AS build
 
 WORKDIR /app
 
@@ -17,7 +17,7 @@ RUN npm run build && npm prune --omit=dev
 # ---------------------------------------------------------------------------
 # Runtime stage
 # ---------------------------------------------------------------------------
-FROM node:22-bookworm-slim AS runtime
+FROM node:25-bookworm-slim AS runtime
 
 LABEL org.opencontainers.image.title="maxima-mcp" \
       org.opencontainers.image.description="Enterprise MCP server for Maxima (computer algebra system)" \
