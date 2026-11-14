@@ -86,7 +86,7 @@ clear, actionable error when unavailable.
 ### From source
 
 ```bash
-git clone https://github.com/maxima-project/maxima-mcp.git
+git clone https://github.com/nagykamel-egypt/maxima-mcp.git
 cd maxima-mcp
 npm ci
 npm run build
