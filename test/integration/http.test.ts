@@ -1,6 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/client";
 import { startHttpServer, type HttpServerHandle } from "../../src/http.js";
 import { createTestRuntime, hasMaxima, type TestRuntime } from "../helpers.js";
 
@@ -101,6 +100,31 @@ describe.skipIf(!available)("HTTP transport integration", () => {
     const text = await metrics.text();
     expect(text).toContain("maxima_mcp_tool_calls_total");
     expect(text).toContain("maxima_mcp_evaluations_total");
+
+    await client.close();
+  });
+
+  it("serves the 2026-07-28 revision to negotiating clients", async () => {
+    const client = new Client(
+      { name: "http-modern-test", version: "1.0.0" },
+      { versionNegotiation: { mode: "auto" } },
+    );
+    const transport = new StreamableHTTPClientTransport(new URL(`${baseUrl}/mcp`), {
+      requestInit: { headers: { Authorization: `Bearer ${token}` } },
+    });
+    await client.connect(transport);
+    expect(client.getProtocolEra()).toBe("modern");
+
+    const tools = await client.listTools();
+    expect(tools.tools.length).toBeGreaterThan(10);
+
+    const result = await client.callTool({
+      name: "maxima_integrate",
+      arguments: { expression: "x^2 + 3*x + 5", variable: "x" },
+    });
+    const structured = result.structuredContent as { output?: string };
+    expect(structured.output).toContain("x^3/3");
+    expect(structured.output).toContain("5*x");
 
     await client.close();
   });

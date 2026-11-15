@@ -172,6 +172,9 @@ class StdioClient {
       stdio: ["pipe", "pipe", "pipe"],
       env: {
         ...process.env,
+        // A --command smoke test is a stdio test even when the checkout's .env
+        // selects the HTTP transport for normal runs.
+        MAXIMA_MCP_TRANSPORT: "stdio",
         MAXIMA_MCP_LOG_LEVEL: process.env.MAXIMA_MCP_LOG_LEVEL ?? "error",
       },
     });

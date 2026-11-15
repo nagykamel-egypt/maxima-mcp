@@ -1,6 +1,6 @@
 {
   "name": "maxima-mcp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Enterprise-grade Model Context Protocol server for Maxima, the computer algebra system.",
   "keywords": [
     "mcp",
@@ -36,7 +36,17 @@
   },
   "files": [
     "dist",
-    "docs",
+    "docs/AI_CLI_TUTORIAL.md",
+    "docs/ARCHITECTURE.md",
+    "docs/CASE_STUDY_CANTILEVER.md",
+    "docs/CASE_STUDY_PIPE_LOOP.md",
+    "docs/CASE_STUDY_VENTILATION.md",
+    "docs/DEPLOYMENT.md",
+    "docs/REPORT_AI_VS_MAXIMA_MCP.md",
+    "docs/SECURITY.md",
+    "docs/TOOLS.md",
+    "docs/TROUBLESHOOTING.md",
+    "docs/img",
     "examples",
     "skills",
     "README.md",
@@ -69,7 +79,8 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "1.32.2",
+    "@modelcontextprotocol/node": "^2.1.2",
+    "@modelcontextprotocol/server": "^2.4.0",
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.4",
@@ -80,6 +91,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.2",
+    "@modelcontextprotocol/client": "^2.4.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.10.4",

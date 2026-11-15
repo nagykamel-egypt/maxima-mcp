@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { renderPlot } from "../maxima/plot.js";
 import type { Runtime } from "../runtime.js";
 import { guarded, text } from "./helpers.js";
@@ -72,7 +71,7 @@ export function registerPlotTools(server: McpServer, runtime: Runtime): void {
         output: z.string(),
       }),
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_plot", async () => {
         const result = await renderPlot(runtime.config, runtime.sessions, {
           expressions: args.expressions,
@@ -93,7 +92,7 @@ export function registerPlotTools(server: McpServer, runtime: Runtime): void {
           legend: args.legend,
           ...(args.session_id === undefined ? {} : { sessionId: args.session_id }),
           ...(args.timeout_ms === undefined ? {} : { timeoutMs: args.timeout_ms }),
-          ...(extra.signal ? { signal: extra.signal } : {}),
+          ...(ctx.mcpReq.signal ? { signal: ctx.mcpReq.signal } : {}),
         });
         const summary = `Rendered ${args.kind.toUpperCase()} plot as ${result.format.toUpperCase()} (${args.width}×${args.height}), ${(result.bytes / 1024).toFixed(1)} KiB in ${result.durationMs} ms.`;
         const notes = result.output.trim() ? `\n\nMaxima output:\n${result.output.trim()}` : "";

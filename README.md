@@ -45,9 +45,12 @@ search, and source-code inspection.
 - **PNG/SVG plotting** through Maxima's gnuplot backend, returned as native MCP image content.
 - **Dual transport**: stdio for local clients, authenticated Streamable HTTP with health,
   readiness, Prometheus metrics and CORS.
+- **MCP v2 / 2026-07-28**: serves the current protocol revision via per-request
+  envelopes and `server/discover`, while keeping sessionful 2025-era
+  Streamable HTTP and stdio support.
 - **Hardened defaults**: safe mode blocks shell/file primitives, child processes receive a
   minimal environment, request limits, rate limiting and path traversal protection.
-- **TypeScript, 113 automated tests**, ESLint, Prettier, Docker images and CI.
+- **TypeScript, 136 automated tests**, ESLint, Prettier, Docker images and CI.
 
 ## Engineering case studies
 
@@ -113,14 +116,14 @@ Install the tarball directly from the
 [latest release](https://github.com/nagykamel-egypt/maxima-mcp/releases/latest):
 
 ```bash
-npm install -g https://github.com/nagykamel-egypt/maxima-mcp/releases/download/v1.0.0/maxima-mcp-1.0.0.tgz
+npm install -g https://github.com/nagykamel-egypt/maxima-mcp/releases/download/v1.1.0/maxima-mcp-1.1.0.tgz
 maxima-mcp --version
 ```
 
 Or download `maxima-mcp-<version>.tgz` and install the local file:
 
 ```bash
-npm install -g ./maxima-mcp-1.0.0.tgz
+npm install -g ./maxima-mcp-1.1.0.tgz
 ```
 
 The release tarball is an npm package that contains the compiled `dist/` output.

@@ -6,12 +6,12 @@ The included `Dockerfile` builds a multi-stage image with Maxima, documentation,
 packages and gnuplot preinstalled.
 
 ```bash
-docker build -t maxima-mcp:1.0.0 .
+docker build -t maxima-mcp:1.1.0 .
 docker run --rm \
   -p 127.0.0.1:7331:7331 \
   -e MAXIMA_MCP_AUTH_TOKEN="$(openssl rand -hex 32)" \
   -v maxima-mcp-cache:/home/mcp/.cache/maxima-mcp \
-  maxima-mcp:1.0.0
+  maxima-mcp:1.1.0
 ```
 
 Key properties:

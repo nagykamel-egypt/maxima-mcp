@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-11-15
 
 ### Added
 
@@ -26,6 +26,18 @@ All notable changes to this project are documented here. The format follows
   frontmatter, tool/resource/prompt coverage, link resolution, evaluation-case
   integrity, and the validate/drift/eval/smoke scripts over stdio and HTTP.
   Runnable with `npm run skill:test`.
+- Added skill brand assets: primary badge (`logo.svg`, `logo.png`,
+  `logo-1024.png`), light/dark horizontal wordmarks, monochrome marks, and PNG
+  exports, with usage guidance in the skill README.
+
+### Changed
+
+- Upgraded to the MCP TypeScript SDK v2 (`@modelcontextprotocol/server` 2.4.0,
+  `@modelcontextprotocol/node` 2.1.2). HTTP and stdio entry points now serve the
+  2026-07-28 protocol revision through `createMcpHandler` / `serveStdio` while
+  retaining the sessionful 2025-era Streamable HTTP path. Negotiating clients
+  such as DeepSeek Harness now get a direct `server/discover` answer instead of
+  a rejected probe followed by a legacy fallback.
 
 ## [1.0.0] - 2026-11-14
 

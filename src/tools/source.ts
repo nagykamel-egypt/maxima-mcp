@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { maximaString } from "../maxima/expressions.js";
 import { isErrorText } from "../maxima/output.js";
 import { ToolError } from "../errors.js";
@@ -247,7 +246,7 @@ export function registerSourceTools(server: McpServer, runtime: Runtime): void {
         duration_ms: z.number(),
       }),
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_package_load", async () => {
         const pkg = await runtime.source.resolvePackage(args.package);
         if (!/^[A-Za-z0-9_.:+-]+$/.test(pkg.name)) {
@@ -263,7 +262,7 @@ export function registerSourceTools(server: McpServer, runtime: Runtime): void {
             : clampTimeout(runtime, args.timeout_ms);
         const result = await runtime.sessions.run(args.session_id, [command], {
           timeoutMs,
-          ...(extra.signal ? { signal: extra.signal } : {}),
+          ...(ctx.mcpReq.signal ? { signal: ctx.mcpReq.signal } : {}),
         });
         const first = result.outputs[0];
         const output = [first?.output ?? "", result.stderr.trim()]

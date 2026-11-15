@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { ToolError } from "../errors.js";
 import { assertSafe, findBalanceProblem, stripStringsAndComments } from "../maxima/expressions.js";
 import { isErrorText } from "../maxima/output.js";
@@ -173,7 +172,7 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_solve", async () => {
         const equations = (Array.isArray(args.equations) ? args.equations : [args.equations]).map(
           (equation, index) => cleanMath(equation, `Equation ${index + 1}`, maxChars),
@@ -186,7 +185,13 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
             ? `solve(${equations[0]}, ${variables[0]})`
             : `solve([${equations.join(", ")}], [${variables.join(", ")}])`;
         if (args.numerical) command = `float(${command})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -212,7 +217,7 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_differentiate", async () => {
         const expression = cleanMath(args.expression, "Expression", maxChars);
         const variable = cleanIdentifier(args.variable, "variable");
@@ -220,7 +225,13 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
           args.order === 1
             ? `diff(${expression}, ${variable})`
             : `diff(${expression}, ${variable}, ${args.order})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -260,7 +271,7 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_integrate", async () => {
         const expression = cleanMath(args.expression, "Integrand", maxChars);
         const variable = cleanIdentifier(args.variable, "integration variable");
@@ -286,7 +297,13 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
         } else {
           command = `integrate(${expression}, ${variable})`;
         }
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -316,7 +333,7 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_limit", async () => {
         const expression = cleanMath(args.expression, "Expression", maxChars);
         const variable = cleanIdentifier(args.variable, "limit variable");
@@ -324,7 +341,13 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
         const suffix =
           args.direction === "plus" ? ", plus" : args.direction === "minus" ? ", minus" : "";
         const command = `limit(${expression}, ${variable}, ${point}${suffix})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -351,13 +374,19 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_series", async () => {
         const expression = cleanMath(args.expression, "Expression", maxChars);
         const variable = cleanIdentifier(args.variable, "expansion variable");
         const point = cleanPoint(args.point, "expansion point");
         const command = `taylor(${expression}, ${variable}, ${point}, ${args.order})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -402,13 +431,19 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_simplify", async () => {
         const expression = cleanMath(args.expression, "Expression", maxChars);
         const method = args.method;
         const command =
           method === "auto" ? `radcan(ratsimp(${expression}))` : `${method}(${expression})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -444,14 +479,20 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_numeric", async () => {
         const expression = cleanMath(args.expression, "Expression", maxChars);
         const command =
           args.mode === "bfloat"
             ? `block([fpprec: ${args.digits}], bfloat(${expression}))`
             : `float(${expression})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );
@@ -495,7 +536,7 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
       },
       outputSchema: mathOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_matrix", async () => {
         const matrix = cleanMath(args.matrix, "Matrix expression", maxChars);
         if (!/^\s*matrix\s*\(/i.test(matrix)) {
@@ -517,7 +558,13 @@ export function registerAlgebraTools(server: McpServer, runtime: Runtime): void 
                 : operation === "trace"
                   ? `block([m: ${matrix}], sum(m[i,i], i, 1, length(m)))`
                   : `${operation}(${matrix})`;
-        const run = await runMath(runtime, args.session_id, command, args.timeout_ms, extra.signal);
+        const run = await runMath(
+          runtime,
+          args.session_id,
+          command,
+          args.timeout_ms,
+          ctx.mcpReq.signal,
+        );
         return mathResult(run);
       }),
   );

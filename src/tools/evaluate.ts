@@ -1,6 +1,5 @@
 import { z } from "zod";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { normalizeCommands } from "../maxima/expressions.js";
 import { isErrorText } from "../maxima/output.js";
 import type { RunOptions } from "../maxima/process.js";
@@ -76,7 +75,7 @@ export function registerEvaluateTools(server: McpServer, runtime: Runtime): void
       },
       outputSchema: evalOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_eval", async () => {
         const commands = normalizeCommands([args.expression], {
           terminator: args.terminator,
@@ -86,7 +85,7 @@ export function registerEvaluateTools(server: McpServer, runtime: Runtime): void
         });
         const runOptions: RunOptions = {
           timeoutMs: clampTimeout(runtime, args.timeout_ms),
-          ...(extra.signal ? { signal: extra.signal } : {}),
+          ...(ctx.mcpReq.signal ? { signal: ctx.mcpReq.signal } : {}),
         };
         const result = await runtime.sessions.run(args.session_id, commands, runOptions);
         const first = result.outputs[0];
@@ -161,7 +160,7 @@ export function registerEvaluateTools(server: McpServer, runtime: Runtime): void
       },
       outputSchema: evalOutputSchema,
     },
-    async (args, extra): Promise<CallToolResult> =>
+    async (args, ctx): Promise<CallToolResult> =>
       guarded(runtime, "maxima_batch", async () => {
         const commands = normalizeCommands(args.commands, {
           terminator: args.terminator,
@@ -171,7 +170,7 @@ export function registerEvaluateTools(server: McpServer, runtime: Runtime): void
         });
         const result = await runtime.sessions.run(args.session_id, commands, {
           timeoutMs: clampTimeout(runtime, args.timeout_ms),
-          ...(extra.signal ? { signal: extra.signal } : {}),
+          ...(ctx.mcpReq.signal ? { signal: ctx.mcpReq.signal } : {}),
         });
         const isError = result.outputs.some((item) => item.isError) || isErrorText(result.stderr);
         const truncated = result.outputs.some((item) => item.output.includes("[output truncated"));

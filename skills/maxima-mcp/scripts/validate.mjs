@@ -100,6 +100,15 @@ const requiredFiles = [
   "assets/mcp-http.json",
   "assets/tool-policies.md",
   "assets/AGENTS-snippet.md",
+  "assets/logo.svg",
+  "assets/logo.png",
+  "assets/logo-1024.png",
+  "assets/logo-wordmark.svg",
+  "assets/logo-wordmark.png",
+  "assets/logo-wordmark-dark.svg",
+  "assets/logo-wordmark-dark.png",
+  "assets/logo-mono.svg",
+  "assets/logo-mono-light.svg",
   "LICENSE",
 ];
 

@@ -1,4 +1,4 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import type { McpServer } from "@modelcontextprotocol/server";
 import type { Runtime } from "../runtime.js";
 import { registerAlgebraTools } from "./algebra.js";
 import { registerDocsTools } from "./docs.js";

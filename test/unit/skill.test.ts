@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  assetsDir,
   evalsDir,
   referencesDir,
   repoRoot,
@@ -215,5 +216,49 @@ describe("skill evaluation suite", () => {
       expect(Array.isArray(record.checks_passed)).toBe(true);
     }
     expect(seen.size).toBe(caseIds.size);
+  });
+});
+
+describe("skill brand assets", () => {
+  const svgFiles = [
+    "logo.svg",
+    "logo-wordmark.svg",
+    "logo-wordmark-dark.svg",
+    "logo-mono.svg",
+    "logo-mono-light.svg",
+  ];
+  const pngFiles = [
+    "logo.png",
+    "logo-1024.png",
+    "logo-wordmark.png",
+    "logo-wordmark-dark.png",
+    "logo-mono.png",
+    "logo-mono-light.png",
+  ];
+  const pngSignature = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+  it("ships well-formed SVG logos", () => {
+    for (const file of svgFiles) {
+      const svg = read(join(assetsDir, file));
+      expect(svg.includes("<svg"), file).toBe(true);
+      expect(svg.includes("viewBox="), file).toBe(true);
+      expect(svg.trimEnd().endsWith("</svg>"), file).toBe(true);
+    }
+  });
+
+  it("ships valid PNG exports", () => {
+    for (const file of pngFiles) {
+      const data = readFileSync(join(assetsDir, file));
+      expect(data.subarray(0, 8).equals(pngSignature), file).toBe(true);
+      expect(data.length, file).toBeGreaterThan(1_000);
+    }
+  });
+
+  it("documents the logo assets in the skill README", () => {
+    const readme = read(join(skillDir, "README.md"));
+    expect(readme).toContain("## Logo and brand assets");
+    expect(readme).toContain("assets/logo.svg");
+    expect(readme).toContain("logo-wordmark-dark.svg");
+    expect(readme).toContain("logo-mono.svg");
   });
 });

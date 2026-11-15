@@ -1,4 +1,4 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { McpServer } from "@modelcontextprotocol/server";
 import type { Runtime } from "./runtime.js";
 import { registerPrompts } from "./prompts.js";
 import { registerResources } from "./resources.js";

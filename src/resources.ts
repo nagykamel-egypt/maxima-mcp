@@ -1,6 +1,4 @@
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { Variables } from "@modelcontextprotocol/sdk/shared/uriTemplate.js";
-import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { ResourceTemplate, type McpServer, type Variables } from "@modelcontextprotocol/server";
 import type { DocEntry } from "./docs/indexer.js";
 import type { Runtime } from "./runtime.js";
 

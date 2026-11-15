@@ -2,8 +2,17 @@ import { randomUUID, timingSafeEqual } from "node:crypto";
 import { createServer as createHttpServer, type Server } from "node:http";
 import cors from "cors";
 import express, { type NextFunction, type Request, type Response } from "express";
-import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import {
+  createMcpHandler,
+  isJsonContentType,
+  isLegacyRequest,
+  type McpServer,
+} from "@modelcontextprotocol/server";
+import {
+  NodeStreamableHTTPServerTransport,
+  toNodeHandler,
+  toWebRequest,
+} from "@modelcontextprotocol/node";
 import type { Logger } from "./logger.js";
 import type { Runtime } from "./runtime.js";
 import { createMcpServer } from "./server.js";
@@ -14,7 +23,7 @@ import { FixedWindowRateLimiter } from "./utils/ratelimit.js";
 interface HttpSession {
   id: string;
   server: McpServer;
-  transport: StreamableHTTPServerTransport;
+  transport: NodeStreamableHTTPServerTransport;
   lastUsed: number;
   closed: boolean;
 }
@@ -59,6 +68,20 @@ function sessionIdFrom(req: Request): string | undefined {
   return header;
 }
 
+/** Convert an Express-style body limit ("2mb") to the byte bound the MCP SDKs expect. */
+function parseBodyLimitBytes(value: string, fallback = 4 * 1024 * 1024): number {
+  const match = value
+    .trim()
+    .toLowerCase()
+    .match(/^(\d+(?:\.\d+)?)\s*(b|kb|mb|gb)?$/);
+  if (!match) return fallback;
+  const amount = Number(match[1]);
+  const unit = match[2] ?? "b";
+  const multiplier =
+    unit === "gb" ? 1024 ** 3 : unit === "mb" ? 1024 ** 2 : unit === "kb" ? 1024 : 1;
+  return Math.max(1, Math.floor(amount * multiplier));
+}
+
 function normaliseHostname(value: string): string {
   const host = value.toLowerCase().trim();
   // Bracketed IPv6 literals, optionally with a port: [::1]:7331 -> ::1
@@ -75,6 +98,7 @@ function normaliseHostname(value: string): string {
 
 export async function startHttpServer(runtime: Runtime, logger: Logger): Promise<HttpServerHandle> {
   const { config } = runtime;
+  const bodyLimitBytes = parseBodyLimitBytes(config.http.bodyLimit);
   const app = express();
   app.disable("x-powered-by");
   app.set("trust proxy", config.http.trustProxy ? 1 : false);
@@ -220,10 +244,10 @@ export async function startHttpServer(runtime: Runtime, logger: Logger): Promise
 
   const createSession = async (): Promise<{
     server: McpServer;
-    transport: StreamableHTTPServerTransport;
+    transport: NodeStreamableHTTPServerTransport;
   }> => {
     const server = createMcpServer(runtime);
-    const transport: StreamableHTTPServerTransport = new StreamableHTTPServerTransport({
+    const transport: NodeStreamableHTTPServerTransport = new NodeStreamableHTTPServerTransport({
       sessionIdGenerator: () => randomUUID(),
       enableJsonResponse: config.http.enableJsonResponse,
       onsessioninitialized: (id) => {
@@ -252,7 +276,52 @@ export async function startHttpServer(runtime: Runtime, logger: Logger): Promise
     return { server, transport };
   };
 
+  const modernMcp = createMcpHandler(() => createMcpServer(runtime), {
+    legacy: "reject",
+    onerror: (error) => {
+      logger.warn({ err: error }, "MCP modern handler error");
+    },
+  });
+  const handleModernMcp = toNodeHandler(modernMcp, {
+    onerror: (error) => {
+      logger.error({ err: error }, "MCP modern handler adapter error");
+    },
+    maxRequestBodySize: bodyLimitBytes,
+  });
+
   const handleMcp = async (req: Request, res: Response): Promise<void> => {
+    // The 2026-07-28 entry validates the media type itself; the hand-wired
+    // legacy leg needs the same check before either path reads the body.
+    if (req.method === "POST" && !isJsonContentType(req.headers["content-type"] ?? "")) {
+      jsonRpcError(res, 415, -32000, "Unsupported Media Type");
+      return;
+    }
+
+    let probe: globalThis.Request;
+    try {
+      probe = await toWebRequest(req, req.body, {
+        maxRequestBodySize: bodyLimitBytes,
+      });
+    } catch (error) {
+      const status =
+        typeof error === "object" && error !== null && "status" in error
+          ? Number((error as { status?: number }).status)
+          : undefined;
+      if (status === 413) {
+        jsonRpcError(res, 413, -32000, "Request body too large.");
+        return;
+      }
+      throw error;
+    }
+
+    // 2026-07-28 clients open with an envelope-bearing server/discover probe and
+    // then send per-request envelopes. Everything else keeps the sessionful
+    // 2025-era transport below.
+    if (!(await isLegacyRequest(probe, req.body, { maxRequestBodySize: bodyLimitBytes }))) {
+      await handleModernMcp(req, res, req.body);
+      return;
+    }
+
     const sessionId = sessionIdFrom(req);
     if (sessionId) {
       const session = sessions.get(sessionId);
@@ -373,6 +442,9 @@ export async function startHttpServer(runtime: Runtime, logger: Logger): Promise
         }, 5_000).unref?.();
       });
       await Promise.allSettled([...sessions.keys()].map((id) => destroySession(id)));
+      await modernMcp.close().catch((error: unknown) => {
+        logger.debug({ err: error }, "Error closing modern MCP handler");
+      });
     },
   };
 }

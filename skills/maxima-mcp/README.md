@@ -5,6 +5,8 @@ for the [Maxima MCP server](https://github.com/nagykamel-egypt/maxima-mcp). It
 works with any MCP-capable client that can load a `SKILL.md` file and call the
 `maxima_*` tools.
 
+<img src="assets/logo.svg" alt="maxima-mcp skill logo" width="120" />
+
 ## What it provides
 
 - **Tool routing** for all 29 Maxima MCP tools, plus resources and prompts.
@@ -23,6 +25,25 @@ works with any MCP-capable client that can load a `SKILL.md` file and call the
   `test/integration/skill-scripts.test.ts`) that asserts the skill's structure,
   coverage, and scripts.
 - **Per-client tool allowlists** for least-privilege rollouts.
+
+## Logo and brand assets
+
+The mark is a geometric **M** built from three connected nodes, with a subtle
+integral-sign watermark: Maxima, a computer algebra system, and the MCP network
+in one glyph. It uses the project palette (cyan `#38BDF8`, teal `#2DD4BF`,
+violet `#A78BFA`, deep navy `#070D18`).
+
+| Asset                                                            | Use                                                           |
+| ---------------------------------------------------------------- | ------------------------------------------------------------- |
+| `assets/logo.svg`, `assets/logo.png`, `assets/logo-1024.png`     | Primary badge; dark background; works on any page background. |
+| `assets/logo-wordmark.svg`, `assets/logo-wordmark.png`           | Horizontal lockup with dark text for light backgrounds.       |
+| `assets/logo-wordmark-dark.svg`, `assets/logo-wordmark-dark.png` | Horizontal lockup with light text for dark backgrounds.       |
+| `assets/logo-mono.svg`                                           | Single-color mark for light backgrounds.                      |
+| `assets/logo-mono-light.svg`                                     | Single-color mark for dark backgrounds.                       |
+
+Keep clear space around the badge equal to at least one quarter of its width.
+Do not stretch, recolor the gradient, or place the primary badge on a
+similarly-valued dark surface without the border.
 
 ## Layout
 
@@ -49,6 +70,10 @@ skills/maxima-mcp/
 │   ├── smoke.mjs                # MCP stdio/HTTP smoke test
 │   └── eval.mjs                 # eval runner (emit / score / self-test)
 ├── assets/
+│   ├── logo.svg, logo.png, logo-1024.png              # primary badge
+│   ├── logo-wordmark.svg, logo-wordmark.png          # light-background lockup
+│   ├── logo-wordmark-dark.svg, logo-wordmark-dark.png # dark-background lockup
+│   ├── logo-mono.svg, logo-mono-light.svg            # single-color marks
 │   ├── mcp-stdio.json           # generic stdio config
 │   ├── mcp-stdio-local.json     # local checkout variant (node + absolute path)
 │   ├── mcp-http.json            # generic HTTP config
@@ -113,9 +138,9 @@ skills/maxima-mcp/
 ## Review
 
 The enterprise review report for this skill is at
-[`docs/SKILL_REVIEW.md`](../../docs/SKILL_REVIEW.md). It records the review
-criteria, findings, risk register, compliance checklist, and acceptance
-decision.
+[`docs/SKILL_REVIEW.md`](https://github.com/nagykamel-egypt/maxima-mcp/blob/main/docs/SKILL_REVIEW.md).
+It records the review criteria, findings, risk register, compliance checklist,
+and acceptance decision.
 
 ## Compatibility
 

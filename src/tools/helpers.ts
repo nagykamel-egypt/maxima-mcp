@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import type { CallToolResult, TextContent } from "@modelcontextprotocol/sdk/types.js";
+import type { CallToolResult, TextContent } from "@modelcontextprotocol/server";
 import type { Runtime } from "../runtime.js";
 import { errorResult, isToolError } from "../errors.js";
 

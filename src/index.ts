@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { config as loadDotenv } from "dotenv";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { serveStdio, type StdioServerHandle } from "@modelcontextprotocol/server/stdio";
 import { ConfigError, loadConfig } from "./config.js";
 import { startHttpServer, type HttpServerHandle } from "./http.js";
 import { createLogger, flushLogger } from "./logger.js";
@@ -94,7 +94,7 @@ async function main(): Promise<void> {
 
   let shuttingDown = false;
   const handles: { http?: HttpServerHandle } = {};
-  let stdioServer: ReturnType<typeof createMcpServer> | undefined;
+  let stdio: StdioServerHandle | undefined;
 
   const shutdown = async (reason: string, exitCode = 0): Promise<void> => {
     if (shuttingDown) return;
@@ -102,7 +102,7 @@ async function main(): Promise<void> {
     logger.info({ reason }, "Shutting down");
     try {
       if (handles.http) await handles.http.close();
-      if (stdioServer) await stdioServer.close();
+      if (stdio) await stdio.close();
       await shutdownRuntime(runtime);
     } catch (error) {
       logger.error({ err: error }, "Error during shutdown");
@@ -127,9 +127,11 @@ async function main(): Promise<void> {
   });
 
   if (config.transport === "stdio") {
-    stdioServer = createMcpServer(runtime);
-    const transport = new StdioServerTransport();
-    await stdioServer.connect(transport);
+    stdio = serveStdio(() => createMcpServer(runtime), {
+      onerror: (error) => {
+        logger.error({ err: error }, "MCP stdio error");
+      },
+    });
     logger.info("MCP server connected over stdio");
     process.stdin.on("end", () => void shutdown("stdin closed"));
     process.stdin.on("close", () => void shutdown("stdin closed"));
